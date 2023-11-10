@@ -22,6 +22,7 @@
     "url": "git@github.com:web3/web3.js-plugin-template.git"
   },
   "dependencies": {
+    "ipfs-http-client": "^56.0.3"
   },
   "devDependencies": {
     "@chainsafe/eslint-config": "^2.0.0",
