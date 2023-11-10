@@ -1,31 +1,24 @@
 import { Web3, core } from "web3";
-import { TemplatePlugin } from "../src";
+import { IPFSPlugin } from "../src";
 
 describe("TemplatePlugin Tests", () => {
-  it("should register TemplatePlugin plugin on Web3Context instance", () => {
+  const host = "ipfs.infura.io:5001";
+  const apiKey = "";
+  const secret = "";
+  it("should register IPFSPlugins on Web3Context instance", () => {
     const web3Context = new core.Web3Context("http://127.0.0.1:8545");
-    web3Context.registerPlugin(new TemplatePlugin());
-    expect(web3Context.template).toBeDefined();
+    web3Context.registerPlugin(new IPFSPlugin(host, apiKey, secret));
+    expect(web3Context.ipfs).toBeDefined();
   });
 
-  describe("TemplatePlugin method tests", () => {
-    let consoleSpy: jest.SpiedFunction<typeof global.console.log>;
-
+  describe("IPFSPlugins method tests", () => {
     let web3: Web3;
 
-    beforeAll(() => {
+    xit("should store file on IPFS", async () => {
       web3 = new Web3("http://127.0.0.1:8545");
-      web3.registerPlugin(new TemplatePlugin());
-      consoleSpy = jest.spyOn(global.console, "log").mockImplementation();
-    });
-
-    afterAll(() => {
-      consoleSpy.mockRestore();
-    });
-
-    it("should call TempltyPlugin test method with expected param", () => {
-      web3.template.test("test-param");
-      expect(consoleSpy).toHaveBeenCalledWith("test-param");
+      web3.registerPlugin(new IPFSPlugin(host, apiKey, secret));
+      const cid = await web3.ipfs.storeFile("test/test.txt");
+      console.log(cid);
     });
   });
 });
