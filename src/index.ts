@@ -10,25 +10,26 @@ export class IPFSPlugin extends Web3PluginBase {
     private ipfsHost: string,
     private ipfsApiKey: string,
     private ipfsSecretKey: string
-
-  ){
+  ) {
     super();
   }
 
   async storeFile(fileSrc: string): Promise<CID> {
     const file = readFileSync(fileSrc).buffer;
     try {
-
-      const ipfsClient = IpfsClient.getInstance(this.ipfsHost, this.ipfsApiKey, this.ipfsSecretKey).client;
+      const ipfsClient = IpfsClient.getInstance(
+        this.ipfsHost,
+        this.ipfsApiKey,
+        this.ipfsSecretKey
+      ).client;
 
       const { cid } = await ipfsClient.add(file);
       return cid;
     } catch (err) {
       console.log(err);
-      throw Error('Error storing file on IPFS')
+      throw Error("Error storing file on IPFS");
     }
   }
-
 }
 
 // Module Augmentation
