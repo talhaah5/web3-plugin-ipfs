@@ -81,6 +81,19 @@ export class IPFSPlugin extends Web3PluginBase {
     }
   }
 
+  async getCidEventsByAddress(address: string): Promise<void> {
+
+    const event = await this.registryContract.getPastEvents(
+      'CIDStored' as any,
+      {
+        filter: { owner: address },
+        fromBlock: 'earliest',
+      },
+    );
+
+    console.log(event);
+  }
+
   public link(parentContext: Web3Context) {
     super.link(parentContext);
     this.registryContract.link(parentContext);
