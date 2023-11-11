@@ -22,9 +22,7 @@ describe("TemplatePlugin Tests", () => {
 
     xit("should store file on IPFS and register to contract", async () => {
       web3 = new Web3("https://sepolia.drpc.org");
-      web3.eth.accounts.wallet.add(
-        "PRIVATE_KEY"
-      );
+      web3.eth.accounts.wallet.add("PRIVATE_KEY");
       web3.registerPlugin(
         new IPFSPlugin({
           ipfsHost: host,
@@ -32,12 +30,11 @@ describe("TemplatePlugin Tests", () => {
           ipfsSecretKey: secret,
         })
       );
-      const cid = await web3.ipfs.storeFile("test/test.txt");
-      await web3.ipfs.sendTransactionToRegistry(
-        web3.eth.accounts.wallet[0].address,
-        cid.toString()
+      const tx = await web3.ipfs.uploadFileAndSendTransaction(
+        "test/test.txt",
+        web3.eth.accounts.wallet[0].address
       );
-      console.log(cid);
+      console.log(tx);
     }, 70000);
 
     it("should get all CID events from contract of specific address", async () => {
@@ -49,12 +46,10 @@ describe("TemplatePlugin Tests", () => {
           ipfsSecretKey: secret,
         })
       );
-      
+
       await web3.ipfs.getCidEventsByAddress(
-        '0xA068cE9Ab80d83043C5Ed8aC5C20A0F288783cc5'
+        "0xA068cE9Ab80d83043C5Ed8aC5C20A0F288783cc5"
       );
-
     }, 70000);
-
   });
 });
