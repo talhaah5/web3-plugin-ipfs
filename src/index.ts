@@ -7,6 +7,8 @@ import {
   ContractAbi,
   Web3Context,
   TransactionReceipt,
+  eth,
+  FMT_NUMBER,
 } from "web3";
 import { IpfsClient } from "./utils/ipfs-client";
 import { REGISTRY_ABI } from "./contracts/registry";
@@ -79,6 +81,53 @@ export class IPFSPlugin extends Web3PluginBase {
       console.error("An error occurred during the transaction process:", error);
       throw error;
     }
+  }
+
+  async getCidEventsByAddress(
+    address: string, 
+    fromBlockNumber = 4546394 // creation of Registry contract https://sepolia.etherscan.io/block/4546394
+    ): Promise<void> {
+
+      const chunkLimit = 5000 //max limit of events per request
+    
+      const toBlockNumber = +(await eth.getBlockNumber(this, FMT_NUMBER.NUMBER as any))
+      const totalBlocks = toBlockNumber - fromBlockNumber
+      const chunks = []
+
+      if (chunkLimit > 0 && totalBlocks > chunkLimit) {
+        const count = Math.ceil(totalBlocks / chunkLimit)
+        let startingBlock = fromBlockNumber
+
+        for (let index = 0; index < count; index++) {
+          const fromRangeBlock = startingBlock
+          const toRangeBlock =
+            index === count - 1 ? toBlockNumber : startingBlock + chunkLimit
+          startingBlock = toRangeBlock + 1
+
+          chunks.push({ fromBlock: fromRangeBlock, toBlock: toRangeBlock })
+        }
+      } else {
+        chunks.push({ fromBlock: fromBlockNumber, toBlock: toBlockNumber })
+      }
+
+      for (const chunk of chunks) {
+        try{
+          const events = await this.registryContract.getPastEvents(
+            'CIDStored' as any,
+            {
+              filter: { owner: address },
+              fromBlock: chunk.fromBlock,
+              toBlock: chunk.toBlock
+            }
+          )
+          if(events.length > 0){
+            console.log(events)
+          }
+        }catch(err){
+          console.log(err)
+        }
+      }
+
   }
 
   public link(parentContext: Web3Context) {

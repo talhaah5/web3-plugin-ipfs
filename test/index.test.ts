@@ -38,6 +38,23 @@ describe("TemplatePlugin Tests", () => {
         cid.toString()
       );
       console.log(cid);
+    }, 7000000);
+
+    it("should get all CID events from contract of specific address", async () => {
+      web3 = new Web3("https://sepolia.drpc.org");
+      web3.registerPlugin(
+        new IPFSPlugin({
+          ipfsHost: host,
+          ipfsApiKey: apiKey,
+          ipfsSecretKey: secret,
+        })
+      );
+      
+      await web3.ipfs.getCidEventsByAddress(
+        '0xA068cE9Ab80d83043C5Ed8aC5C20A0F288783cc5'
+      );
+
     }, 70000);
+
   });
 });
