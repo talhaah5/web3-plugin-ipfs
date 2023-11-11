@@ -38,7 +38,7 @@ describe("TemplatePlugin Tests", () => {
         cid.toString()
       );
       console.log(cid);
-    }, 7000000);
+    }, 70000);
 
     it("should get all CID events from contract of specific address", async () => {
       web3 = new Web3("https://sepolia.drpc.org");
