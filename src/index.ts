@@ -84,11 +84,15 @@ export class IPFSPlugin extends Web3PluginBase {
   }
 
   public async uploadFileAndSendTransaction(
-    account: string,
-    fileSrc: string
+    fileSrc: string,
+    accountNumber: number = 0
   ): Promise<TransactionReceipt> {
     const cid = await this.storeFile(fileSrc);
-    const tx = await this.sendTransactionToRegistry(account, cid.toString());
+
+    if(!this.wallet || this.wallet.length <= accountNumber) {
+        throw new Error("Account not found");
+    }
+    const tx = await this.sendTransactionToRegistry(this.wallet[accountNumber].address, cid.toString());
     return tx;
   }
 
