@@ -92,10 +92,10 @@ export class IPFSPlugin extends Web3PluginBase {
     return tx;
   }
 
-  async getCidEventsByAddress(
+  public async getCidEventsByAddress(
     address: string,
     fromBlockNumber = 4546394 // creation of Registry contract https://sepolia.etherscan.io/block/4546394
-  ): Promise<void> {
+  ): Promise<(string | eth.contract.EventLog)[]> {
     const chunkLimit = 5000; //max limit of events per request
 
     const toBlockNumber = +(await eth.getBlockNumber(
@@ -121,6 +121,7 @@ export class IPFSPlugin extends Web3PluginBase {
       chunks.push({ fromBlock: fromBlockNumber, toBlock: toBlockNumber });
     }
 
+    const _events = [];
     for (const chunk of chunks) {
       try {
         const events = await this.registryContract.getPastEvents(
@@ -133,11 +134,14 @@ export class IPFSPlugin extends Web3PluginBase {
         );
         if (events.length > 0) {
           console.log(events);
+          _events.push(...events);
         }
       } catch (err) {
         console.log(err);
       }
     }
+
+    return _events
   }
 
   public link(parentContext: Web3Context) {

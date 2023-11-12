@@ -1,17 +1,27 @@
 import { Web3, core } from "web3";
 import { IPFSPlugin } from "../src";
 
-describe("TemplatePlugin Tests", () => {
+// Mock the IpfsClient class
+jest.mock("../src/utils/ipfs-client", () => ({
+  IpfsClient: {
+    getInstance: jest.fn(() => ({
+      client: {
+        add: jest.fn((_) => ({ cid: "mockedCID" })),
+      },
+    })),
+  },
+}));
+
+describe("IPFSPlugins Tests", () => {
   const host = "ipfs.infura.io:5001";
-  const apiKey = "";
-  const secret = "";
+
   it("should register IPFSPlugins on Web3Context instance", () => {
     const web3Context = new core.Web3Context("http://127.0.0.1:8545");
     web3Context.registerPlugin(
       new IPFSPlugin({
         ipfsHost: host,
-        ipfsApiKey: apiKey,
-        ipfsSecretKey: secret,
+        ipfsApiKey: "",
+        ipfsSecretKey: "",
       })
     );
     expect(web3Context.ipfs).toBeDefined();
@@ -20,36 +30,44 @@ describe("TemplatePlugin Tests", () => {
   describe("IPFSPlugins method tests", () => {
     let web3: Web3;
 
-    xit("should store file on IPFS and register to contract", async () => {
+    beforeAll(() => {
       web3 = new Web3("https://sepolia.drpc.org");
-      web3.eth.accounts.wallet.add("PRIVATE_KEY");
+      web3.eth.accounts.wallet.add(
+        "0x8c3769767392647636b8613c510df9a2616b15f97d8a56658f322cd034b8f905"
+      ); //this address has some testnet eth
+
       web3.registerPlugin(
         new IPFSPlugin({
           ipfsHost: host,
-          ipfsApiKey: apiKey,
-          ipfsSecretKey: secret,
+          ipfsApiKey: "",
+          ipfsSecretKey: "",
         })
       );
+    });
+
+    it("should store file on IPFS and register to contract", async () => {
       const tx = await web3.ipfs.uploadFileAndSendTransaction(
-        "test/test.txt",
-        web3.eth.accounts.wallet[0].address
+        web3.eth.accounts.wallet[0].address,
+        "test/test.txt"
       );
-      console.log(tx);
+
+      expect(tx).toBeDefined();
     }, 70000);
 
     it("should get all CID events from contract of specific address", async () => {
-      web3 = new Web3("https://sepolia.drpc.org");
-      web3.registerPlugin(
-        new IPFSPlugin({
-          ipfsHost: host,
-          ipfsApiKey: apiKey,
-          ipfsSecretKey: secret,
-        })
-      );
-
       await web3.ipfs.getCidEventsByAddress(
-        "0xA068cE9Ab80d83043C5Ed8aC5C20A0F288783cc5"
+        web3.eth.accounts.wallet[0].address
       );
+    }, 70000);
+
+    it("should handle errors during file upload and transaction", async () => {
+      const address = web3.eth.accounts.wallet[0].address;
+      const invalidFilePath = "nonexistent-file.txt";
+
+      // Assert that the async function rejects with an error
+      await expect(
+        web3.ipfs.uploadFileAndSendTransaction(address, invalidFilePath)
+      ).rejects.toThrowError();
     }, 70000);
   });
 });
