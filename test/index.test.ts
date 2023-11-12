@@ -47,7 +47,6 @@ describe("IPFSPlugins Tests", () => {
 
     it("should store file on IPFS and register to contract", async () => {
       const tx = await web3.ipfs.uploadFileAndSendTransaction(
-        web3.eth.accounts.wallet[0].address,
         "test/test.txt"
       );
 
@@ -61,12 +60,11 @@ describe("IPFSPlugins Tests", () => {
     }, 70000);
 
     it("should handle errors during file upload and transaction", async () => {
-      const address = web3.eth.accounts.wallet[0].address;
       const invalidFilePath = "nonexistent-file.txt";
 
       // Assert that the async function rejects with an error
       await expect(
-        web3.ipfs.uploadFileAndSendTransaction(address, invalidFilePath)
+        web3.ipfs.uploadFileAndSendTransaction(invalidFilePath)
       ).rejects.toThrowError();
     }, 70000);
   });
