@@ -1,12 +1,12 @@
 {
-  "name": "web3-plugin-template",
+  "name": "web3-plugin-ipfs",
   "version": "1.0.0",
-  "description": "Template plugin to extend web3.js with additional methods",
+  "description": "Web3.js Plugin for IPFS Upload and register in Contract",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "homepage": "https://github.com/web3/web3.js-plugin-template#readme",
+  "homepage": "https://github.com/web3/web3.js-plugin-ipfs#readme",
   "bugs": {
-    "url": "https://github.com/web3/web3.js-plugin-template/issues"
+    "url": "https://github.com/web3/web3.js-plugin-ipfs/issues"
   },
   "scripts": {
     "lint": "eslint '{src,test}/**/*.ts'",
@@ -19,7 +19,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git@github.com:web3/web3.js-plugin-template.git"
+    "url": "git@github.com:web3/web3.js-plugin-ipfs.git"
   },
   "dependencies": {
     "ipfs-http-client": "^56.0.3"
